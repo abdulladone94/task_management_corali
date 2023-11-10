@@ -6,7 +6,19 @@ function App() {
   const [itemText, setItemText] = useState('');
   const [listItems, setListItems] = useState([]);
 
-  //Create function to fetch all todo items from database -- we will use useEffect hook
+  const addItem = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.post('http://localhost:5500/api/item', {
+        item: itemText,
+      });
+      setListItems((prev) => [...prev, res.data]);
+      setItemText('');
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   useEffect(() => {
     const getItemsList = async () => {
       try {
@@ -23,7 +35,7 @@ function App() {
   return (
     <div className="App">
       <h1>Todo List</h1>
-      <form className="form">
+      <form className="form" onSubmit={(e) => addItem(e)}>
         <input
           type="text"
           placeholder="Add Todo Item"
