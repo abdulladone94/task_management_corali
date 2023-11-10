@@ -33,4 +33,14 @@ router.put('/api/item/:id', async (req, res) => {
   }
 });
 
+router.delete('/api/item/:id', async (req, res) => {
+  try {
+    //find the item by its id and delete it
+    const deleteItem = await todoItemsModel.findByIdAndDelete(req.params.id);
+    res.status(200).json('Item Deleted');
+  } catch (err) {
+    res.json(err);
+  }
+});
+
 module.exports = router;
