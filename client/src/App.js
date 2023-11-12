@@ -11,9 +11,12 @@ function App() {
   const addItem = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:5500/api/item', {
-        item: itemText,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_SERVER_URL}/api/item`,
+        {
+          item: itemText,
+        }
+      );
       setListItems((prev) => [...prev, res.data]);
       setItemText('');
     } catch (err) {
@@ -24,7 +27,9 @@ function App() {
   useEffect(() => {
     const getItemsList = async () => {
       try {
-        const res = await axios.get('http://localhost:5500/api/items');
+        const res = await axios.get(
+          `${process.env.REACT_APP_SERVER_URL}/api/items`
+        );
         setListItems(res.data);
         console.log('render');
       } catch (err) {
@@ -36,7 +41,9 @@ function App() {
 
   const deleteItem = async (id) => {
     try {
-      const res = await axios.delete(`http://localhost:5500/api/item/${id}`);
+      const res = await axios.delete(
+        `${process.env.REACT_APP_SERVER_URL}/api/item/${id}`
+      );
       console.log(res);
       const newListItems = listItems.filter((item) => item._id !== id);
       setListItems(newListItems);
@@ -49,7 +56,7 @@ function App() {
     e.preventDefault();
     try {
       const res = await axios.put(
-        `http://localhost:5500/api/item/${isUpdating}`,
+        `${process.env.REACT_APP_SERVER_URL}/api/item/${isUpdating}`,
         { item: updateItemText }
       );
       console.log(res.data);
