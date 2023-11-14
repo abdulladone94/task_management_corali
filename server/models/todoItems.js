@@ -5,6 +5,10 @@ const TodoItemSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  description: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model('todo', TodoItemSchema);
