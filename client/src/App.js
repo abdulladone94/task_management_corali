@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Button, Modal } from 'antd';
 import './App.css';
 
 function App() {
@@ -10,6 +11,8 @@ function App() {
   const [listItems, setListItems] = useState([]);
   const [isUpdating, setIsUpdating] = useState('');
   const [updateItemText, setUpdateItemText] = useState('');
+  const [updateDescription, setUpdateDescription] = useState('');
+  // const [isModalOpen, setIsModalOpen] = useState(false);
 
   console.log(listItems);
 
@@ -63,20 +66,36 @@ function App() {
     }
   };
 
+  // const showModal = () => {
+  //   setIsModalOpen(true);
+  // };
+  // const handleOk = (id) => {
+  //   deleteItem(id);
+
+  //   setIsModalOpen(false);
+  // };
+  // const handleCancel = () => {
+  //   setIsModalOpen(false);
+  // };
+
   const updateItem = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.put(
         `${process.env.REACT_APP_SERVER_URL}/api/item/${isUpdating}`,
-        { item: updateItemText }
+        { item: updateItemText, description: updateDescription }
       );
       console.log(res.data);
       const updatedItemIndex = listItems.findIndex(
         (item) => item._id === isUpdating
       );
       const updatedItem = (listItems[updatedItemIndex].item = updateItemText);
+      const updatedDescription = (listItems[updatedItemIndex].description =
+        updateDescription);
       console.log(updatedItem);
+      console.log(updatedDescription);
       setUpdateItemText('');
+      setUpdateDescription('');
       setIsUpdating('');
     } catch (err) {
       console.log(err);
@@ -84,30 +103,42 @@ function App() {
   };
   const renderUpdateForm = () => (
     <form
-      className="update-form"
+      className="flex-col"
       onSubmit={(e) => {
         updateItem(e);
       }}
     >
       <input
-        className="update-new-input"
+        className="rounded-[5px] border-2 border-gray-100/80 w-full bg-[#eee] mb-3"
         type="text"
-        placeholder="New Item"
+        placeholder="Update Title"
         onChange={(e) => {
           setUpdateItemText(e.target.value);
         }}
         value={updateItemText}
       />
-      <button className="update-new-btn" type="submit">
+      <input
+        className="rounded-[5px] border-2 border-gray-100/80 w-full bg-[#eee] mb-3"
+        type="text"
+        placeholder="Update Description"
+        onChange={(e) => {
+          setUpdateDescription(e.target.value);
+        }}
+        value={updateDescription}
+      />
+      <button
+        className="rounded-[20px] border-2 border-black-100/80 bg-slate-300 mr-5 hover:bg-slate-400"
+        type="submit"
+      >
         Update
       </button>
     </form>
   );
 
   return (
-    <div className="flex-col justify-center w-auto my-5 md:my-10 mx-5 md:mx-10 text-center">
+    <div className="flex-col justify-center w-auto mx-5 my-5 text-center md:my-10 md:mx-10">
       <h1 className="text-3xl font-bold underline ">My Task Manager</h1>
-      <form className=" flex justify-center" onSubmit={(e) => addItem(e)}>
+      <form className="flex justify-center" onSubmit={(e) => addItem(e)}>
         <div className="grid grid-cols-1  gap-4 w-[400px] sm:w-[750px] my-10">
           <input
             type="text"
@@ -163,13 +194,13 @@ function App() {
         </div>
       </form>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-auto ">
+      <div className="grid w-auto grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 ">
         {listItems?.map((task) => (
           <div className="bg-white px-5 relative mb-6 h-[265px] min-w-[265px] transform snap-start rounded-[20px] border-2 border-gray-100/80 transition-all duration-300  ease-in-out hover:scale-105 hover:border-white">
-            <h6 className="font-jost text-xl font-bold text-center text-gray-600">
+            <h6 className="text-xl font-bold text-center text-gray-600 font-jost">
               {task.item}
             </h6>
-            <h6 className="mb-2 font-poppins text-lg font-medium my-4 text-left text-gray-400">
+            <h6 className="my-4 mb-2 text-lg font-medium text-left text-gray-400 font-poppins">
               {task.description}
             </h6>
 
@@ -179,7 +210,7 @@ function App() {
               ) : (
                 <div className="w-full">
                   {task.startDate && task.startDate !== '' ? (
-                    <div className="text-left text-gray-400 my-4">
+                    <div className="my-4 text-left text-gray-400">
                       <p className="">Start : {task.startDate.split('T')[0]}</p>
                       <p className="">End : {task.endDate.split('T')[0]}</p>
                     </div>
@@ -188,7 +219,7 @@ function App() {
                   )}
                   <div className="flex justify-start">
                     <button
-                      className="rounded-[20px] border-2 border-black-100/80 bg-slate-300 mr-5"
+                      className="rounded-[20px] border-2 border-black-100/80 bg-slate-300 mr-5 hover:bg-slate-400"
                       onClick={() => {
                         setIsUpdating(task._id);
                       }}
@@ -196,10 +227,11 @@ function App() {
                       Update
                     </button>
                     <button
-                      className="rounded-[20px] border-2 border-black-100/80 bg-slate-300"
+                      className="rounded-[20px] border-2 border-black-100/80 bg-slate-300 hover:bg-slate-400"
                       onClick={() => {
                         deleteItem(task._id);
                       }}
+                      // onClick={showModal}
                     >
                       Delete
                     </button>
@@ -207,6 +239,12 @@ function App() {
                 </div>
               )}
             </div>
+            {/* <Modal
+              title={`Are you sure you want to delete this task ?`}
+              open={isModalOpen}
+              onOk={handleOk}
+              onCancel={handleCancel}
+            ></Modal> */}
           </div>
         ))}
       </div>
