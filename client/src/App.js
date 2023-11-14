@@ -4,6 +4,7 @@ import './App.css';
 
 function App() {
   const [itemText, setItemText] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
   const [listItems, setListItems] = useState([]);
   const [isUpdating, setIsUpdating] = useState('');
   const [updateItemText, setUpdateItemText] = useState('');
@@ -15,10 +16,12 @@ function App() {
         `${process.env.REACT_APP_SERVER_URL}/api/item`,
         {
           item: itemText,
+          description: taskDescription,
         }
       );
       setListItems((prev) => [...prev, res.data]);
       setItemText('');
+      setTaskDescription('');
     } catch (err) {
       console.log(err);
     }
@@ -95,30 +98,41 @@ function App() {
 
   return (
     <div className="App">
-      <h1>Todo List</h1>
+      <h1>My Task Manager</h1>
       <form className="form" onSubmit={(e) => addItem(e)}>
         <input
           type="text"
-          placeholder="Add Todo Item"
+          placeholder="Task Title"
+          required
           onChange={(e) => {
             setItemText(e.target.value);
           }}
           value={itemText}
         />
+        <input
+          type="text"
+          placeholder="Task Description"
+          required
+          onChange={(e) => {
+            setTaskDescription(e.target.value);
+          }}
+          value={taskDescription}
+        />
         <button type="submit">Add</button>
       </form>
       <div className="todo-listItems">
-        {listItems.map((item) => (
+        {listItems.map((task) => (
           <div className="todo-item">
-            {isUpdating === item._id ? (
+            {isUpdating === task._id ? (
               renderUpdateForm()
             ) : (
               <>
-                <p className="item-content">{item.item}</p>
+                <p className="item-content">{task.item}</p>
+                <p className="item-content">{task.description}</p>
                 <button
                   className="update-item"
                   onClick={() => {
-                    setIsUpdating(item._id);
+                    setIsUpdating(task._id);
                   }}
                 >
                   Update
@@ -126,7 +140,7 @@ function App() {
                 <button
                   className="delete-item"
                   onClick={() => {
-                    deleteItem(item._id);
+                    deleteItem(task._id);
                   }}
                 >
                   Delete
