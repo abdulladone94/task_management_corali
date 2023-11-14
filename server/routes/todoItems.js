@@ -6,6 +6,8 @@ router.post('/api/item', async (req, res) => {
     const newItem = new todoItemsModel({
       item: req.body.item,
       description: req.body.description,
+      startDate: req.body.startDate,
+      endDate: req.body.endDate,
     });
     const saveItem = await newItem.save();
     res.status(200).json(saveItem);
